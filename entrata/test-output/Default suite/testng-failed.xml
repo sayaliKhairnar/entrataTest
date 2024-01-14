@@ -5,9 +5,9 @@
     <classes>
       <class name="entrataTest.demoTestClass">
         <methods>
+          <include name="solutionsMultiFamilyWatchWhyEntrataVideo"/>
           <include name="tearDown"/>
           <include name="setup"/>
-          <include name="verifyPageTitle"/>
         </methods>
       </class> <!-- entrataTest.demoTestClass -->
     </classes>

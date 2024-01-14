@@ -14,7 +14,6 @@ import org.openqa.selenium.support.ui.Select;
 import entrataDemo.EnterDataBaseclass;
 
 public class demoTestClass extends EnterDataBaseclass {
-
 	@FindBy(xpath = "(//a[@class='button-default solid-dark-button'])[1]")
 	private WebElement watchDemoButton;
 	@FindBy(xpath = "//input[@id='FirstName']")
@@ -34,7 +33,7 @@ public class demoTestClass extends EnterDataBaseclass {
 	@FindBy(xpath = "//a[@title='Entrata Home Page']")
 	private WebElement getTitle;
 	@FindBy(xpath = "//a[@class='main-header-logo']")
-	private WebElement logo;
+	private WebElement entrataLogo;
 	@FindBy(xpath = "//div[@class='cookie-consent-form']")
 	private WebElement getCoockiesBanner;
 	@FindBy(xpath = "//button[@id='rcc-confirm-button']")
@@ -57,14 +56,17 @@ public class demoTestClass extends EnterDataBaseclass {
 
 	@BeforeClass
 	public void setup() throws IOException {
-		openbrowser(); // It opens the browser
+		// Open the browser and initialize page elements
+		openbrowser(); 
 		PageFactory.initElements(driver, this);
-		if (getCoockiesBanner.isDisplayed()) {
-			coockiesAcceptButton.click();
-			// Check if cookies banner is displayed and accept it if present
-
+		// Check if cookies banner is displayed and accept it if present
+		WebElement coockiesBannerElement = waitForElementToBeVisible(getCoockiesBanner, 3);
+		if (coockiesBannerElement.isDisplayed()) {
+			WebElement coockiesAcceptButtonElement = waitForElementToBeVisible(coockiesAcceptButton, 3);
+			coockiesAcceptButtonElement.click();
 		}
 	}
+
 
 	@Test(priority = 1)
 	public void verifyPageTitle() {
@@ -79,20 +81,21 @@ public class demoTestClass extends EnterDataBaseclass {
 
 	@Test(priority = 2)
 	public void verifyPageLogo() {
-		boolean actuallogo = logo.isDisplayed();
-		//verify that logo is display
+        // Verify that the Entrata logo is displayed on the page
+		boolean actuallogo = entrataLogo.isDisplayed();
 		if (actuallogo) {
-	        System.out.println("Logo is displayed on the page.");
+	        System.out.println("Entrata logo is displayed on the page.");
 	    } else {
-	        System.out.println("Logo is not displayed on the page.");
+	        System.out.println("Entrata logo is not displayed on the page.");
 	    }
 		Assert.assertTrue(actuallogo);
 	}
 
 	@Test(priority = 3)
 	public void watchDemo() {
+        // Click on the "Watch Demo" button and fill the demo form
 		watchDemoButton.click();
-
+		//Fills the details in the watch Demo form
 		firstName.sendKeys("sayali");
 		lastName.sendKeys("Khairnar");
 		email.sendKeys("sayalikhairnar@gmail.com");
@@ -101,6 +104,7 @@ public class demoTestClass extends EnterDataBaseclass {
 		Select s = new Select(unitCount);
 		s.selectByVisibleText("1 - 10");
 		title.sendKeys("SoftwareTester");
+		
 		// Verify that the form fields are filled correctly
 		Assert.assertEquals(firstName.getAttribute("value"), "sayali");
 		Assert.assertEquals(lastName.getAttribute("value"), "Khairnar");
@@ -113,13 +117,17 @@ public class demoTestClass extends EnterDataBaseclass {
 
 	@Test(priority = 4)
 	public void watchProductResidentPayDemo() {
+		// Navigate to ResidentPay demo page from the Products menu
 		driver.get("https://www.entrata.com/");
-
+		// hover on Products menu link 
 		Actions act = new Actions(driver);
-		act.moveToElement(productMenuLink).perform(); // to hover over a menu link, 
+		act.moveToElement(productMenuLink).perform();
+		//click on Resident Pay sub menu
 		residentPayMenuLink.click();
+		//click on schedule demo button
 		scheduleDemo.click();
-
+        
+		//Fills the scheduleDemo form
 		firstName.sendKeys("sayali");
 		lastName.sendKeys("Khairnar");
 		email.sendKeys("sayalikhairnar@gmail.com");
@@ -136,23 +144,30 @@ public class demoTestClass extends EnterDataBaseclass {
 		Assert.assertEquals(companyName.getAttribute("value"), "entrata");
 		Assert.assertEquals(phoneNumber.getAttribute("value"), "7854513698");
 		Assert.assertEquals(title.getAttribute("value"), "SoftwareTester");
+		//redirect to home page
 		driver.get("https://www.entrata.com/");
 	}
 
 	@Test(priority = 5)
 	public void solutionsMultiFamilyWatchWhyEntrataVideo() throws InterruptedException {
+		//hove on Solutions menu link
 		Actions act = new Actions(driver);
 		act.moveToElement(solutionsMenuLink).perform();
+		//click on Multi Family sub menu link
 		multiFamilyeMenuLink.click();
+		//click on play button to watch video of Why Entrata?
 		multifamilyVideoButtonWhyEntrata.click();
-		Thread.sleep(3000);
-		multifamilyVideoCloseButton.click(); //closed video after pause
+		Thread.sleep(5000);
+		//closed video after 5 Seconds
+		multifamilyVideoCloseButton.click();
+		//redirect to home
+		driver.get("https://www.entrata.com/"); 
 	}
 
 	@AfterClass
-	public void tearDown() throws InterruptedException {
-		driver.get("https://www.entrata.com/");  //back to main page
-		Thread.sleep(5000);                      //wait for 5 seconds
+	public void tearDown() throws InterruptedException {		
+		//wait for 5 seconds and then close the browser
+		Thread.sleep(5000);                      
 		if (driver != null) {
 			driver.quit();
 		}
